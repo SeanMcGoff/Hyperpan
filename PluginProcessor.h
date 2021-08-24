@@ -46,7 +46,6 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     juce::AudioProcessorValueTreeState apvts {*this, nullptr, "Parameters", createParameterLayout()};
 private:
-    juce::dsp::Panner<float> panner;
     void reset() override;
 
 

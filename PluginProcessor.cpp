@@ -1,6 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+# define PI           3.14159265358979323846  /* pi */
+
 //==============================================================================
 HyperpanAudioProcessor::HyperpanAudioProcessor()
      : AudioProcessor (BusesProperties()
@@ -12,7 +14,7 @@ HyperpanAudioProcessor::HyperpanAudioProcessor()
                      #endif
                        )
 {
-    panner.setRule(juce::dsp::PannerRule::linear);
+
 }
 
 HyperpanAudioProcessor::~HyperpanAudioProcessor()
@@ -87,9 +89,6 @@ void HyperpanAudioProcessor::changeProgramName (int index, const juce::String& n
 //==============================================================================
 void HyperpanAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    juce::dsp::ProcessSpec spec{.sampleRate =  sampleRate, .maximumBlockSize =  static_cast<juce::uint32>(samplesPerBlock), .numChannels =  2};
-    panner.prepare(spec);
-
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
 
@@ -128,6 +127,10 @@ void HyperpanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 {
     std::atomic<float>* mixParameter = apvts.getRawParameterValue("mix");
     float mix = mixParameter->load() / 100.f;
+
+    //Linear, Square, Sine
+    juce::String panlaw = apvts.getParameter("panlaw")->getCurrentValueAsText();
+
     juce::ignoreUnused (midiMessages);
 
     juce::ScopedNoDenormals noDenormals;
@@ -145,6 +148,31 @@ void HyperpanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
         float monoSum = (left[sample] + right[sample]) * 0.5f;
         float normalizedAmplitude = (monoSum + 1) * 0.5f;
+        float leftMult = 1.f, rightMult = 1.f;
+        if (panlaw == "Linear")
+        {
+            //LINEAR PAN LAW
+            leftMult = (1.f - normalizedAmplitude);
+            rightMult = normalizedAmplitude;
+        }
+        if (panlaw == "Square")
+        {
+            //SQUARE PAN LAW
+            leftMult = sqrtf(1.f - normalizedAmplitude);
+            rightMult = sqrtf(normalizedAmplitude);
+        }
+        if (panlaw == "Sine") {
+            //SINE PAN LAW
+            leftMult = sinf(static_cast<float>((1.f - normalizedAmplitude) * PI / 2.f));
+            rightMult = sinf(static_cast<float>(normalizedAmplitude * PI / 2.f));
+        }
+        float leftWet = left[sample] * leftMult;
+        float rightWet = right[sample] * rightMult;
+
+        left[sample] = (leftWet * mix) + (left[sample] * (1.f - mix));
+        right[sample] = (rightWet * mix) + (right[sample] * (1.f - mix));
+        /*
+         * OLD PAN LAW
         if (normalizedAmplitude > 0.5) {
             float multiplier = -2.f*normalizedAmplitude + 2;
             float wet = right[sample] * multiplier;
@@ -154,6 +182,7 @@ void HyperpanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             float wet = left[sample] * multiplier;
             left[sample] = (wet * mix) + (left[sample] * (1.f - mix));
         }
+         */
     }
 }
 
@@ -191,13 +220,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout HyperpanAudioProcessor::crea
 
     auto cutoffRange = juce::NormalisableRange<float>(0.f, 100.f, 0.1f, 1.f, true);
     layout.add(std::make_unique<juce::AudioParameterFloat>("mix", "Dry/Wet", cutoffRange, 0.f));
-
+    layout.add(std::make_unique<juce::AudioParameterChoice>("panlaw", "Pan Law", juce::StringArray("Linear", "Square", "Sine"), 0));
     return layout;
 }
 
 void HyperpanAudioProcessor::reset()
 {
-    panner.reset();
+
 }
 
 //==============================================================================

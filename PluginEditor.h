@@ -17,10 +17,12 @@ public:
 private:
     //GUI Controls
     juce::Slider mixSlider;
+    juce::ComboBox panLawBox;
 
+    //GUI Attachments
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> panLawBoxAttachment;
 
-    //juce::AudioProcessorValueTreeState::Listener paramUIListener;
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     HyperpanAudioProcessor& processorRef;

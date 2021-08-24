@@ -1,0 +1,17 @@
+# CMake build folders
+**/cmake-build
+**/cmake-build-debug
+**/cmake-build-release
+# Jetbrains
+**/.idea
+# plugin file extensions
+*.vst3
+*.AU
+*.dll
+*.vst
+# Mac folder
+.DS_Store
+# JUCE Subdirectory
+JUCE
+# Build Scripts
+prepareForWin.sh

@@ -17,8 +17,6 @@ HyperpanAudioProcessorEditor::HyperpanAudioProcessorEditor (HyperpanAudioProcess
 
     juce::ignoreUnused (processorRef);
 
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
     setSize (400, 400);
 }
 
@@ -30,13 +28,11 @@ HyperpanAudioProcessorEditor::~HyperpanAudioProcessorEditor()
 //==============================================================================
 void HyperpanAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (juce::Colours::black);
 }
 
 void HyperpanAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    //component position function
     mixSlider.setBounds (getLocalBounds());
 }

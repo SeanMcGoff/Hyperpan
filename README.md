@@ -22,8 +22,8 @@ If you use windows, verify that CMake is using visual studio as your CMake gener
 
 Next, locate where you placed the JUCE folder and open run these commands, replacing {Juce folder path} with the literal path to your JUCE folder:
 ```
-    cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX={Juce folder path}/install
-    cmake --build cmake-build-install --target install
+cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX={Juce folder path}/install
+cmake --build cmake-build-install --target install
 ```
 
 ### Building

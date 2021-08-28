@@ -29,7 +29,7 @@ Next, locate where you placed the JUCE folder and open run these commands, repla
 ### Building
 Finally, locate the Hyperpan folder and run these commands:
 ```
-cmake -B cmake-build -DCMAKE_BUILD_TYPE=release
+cmake -B cmake-build -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX={Juce folder path}/install
 cmake --build cmake-build
 ```
 

@@ -20,18 +20,18 @@ or [download as a zip here](https://github.com/SeanMcGoff/Hyperpan/archive/refs/
 
 If you use windows, verify that CMake is using visual studio as your CMake generator by typing ```cmake -G``` and seeing if the asterisk is before a **Visual Studio** generator.
 
-### Building
-Locate where you placed the JUCE folder and open run these commands, replacing {Juce folder path} with the literal path to your JUCE folder:
+Next, locate where you placed the JUCE folder and open run these commands, replacing {Juce folder path} with the literal path to your JUCE folder:
 ```
     cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX={Juce folder path}/install
     cmake --build cmake-build-install --target install
 ```
 
-Next, locate the Hyperpan folder and run these commands:
+### Building
+Finally, locate the Hyperpan folder and run these commands:
 ```
-cmake -B cmake-build -DCMAKE_PREFIX_PATH={Juce folder path}/install
+cmake -B cmake-build -DCMAKE_BUILD_TYPE=release
 cmake --build cmake-build
 ```
 
-The vst3 should be in the resulting *cmake-build* folder
+The vst3 should be in the resulting *cmake-build-release* folder
 

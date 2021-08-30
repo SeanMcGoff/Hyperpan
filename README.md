@@ -22,16 +22,20 @@ If you use windows, verify that CMake is using visual studio as your CMake gener
 
 Next, locate where you placed the JUCE folder and open run these commands, replacing {Juce folder path} with the literal path to your JUCE folder:
 ```
-cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX={Juce folder path}/install
+cmake -B cmake-build-install -DCMAKE_INSTALL_PREFIX={JUCE folder path}/install
 cmake --build cmake-build-install --target install
 ```
 
 ### Building
-Finally, locate the Hyperpan folder and run these commands:
+When building the project, you can either run the python install script with the command
 ```
-cmake -B cmake-build -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX={Juce folder path}/install
+python3 install.py -JUCE_INSTALL_PATH="{JUCE folder path}
+```
+or you can build manually with these cmake commands:
+```
+cmake -B cmake-build -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX={JUCE folder path}/install
 cmake --build cmake-build
 ```
 
-The vst3 should be in the resulting *cmake-build-release* folder
+The vst3 should be in the resulting *cmake-build* folder
 

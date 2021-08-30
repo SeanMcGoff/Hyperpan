@@ -1,18 +1,26 @@
-
 cmake_minimum_required(VERSION 3.15)
 
 
-project(Hyperpan VERSION 0.0.1)
+project(Hyperpan VERSION 0.1.0)
 
-# This might be specific to my computer, but Windows was not finding JUCE using the find_package() command
-if(WIN32)
-    # because of that, if you'd like to compile, you need to change the filepath from "/JUCE" to wherever
-    # the root dir of JUCE is on your windows system
-    add_subdirectory("/JUCE" JUCE)
-endif(WIN32)
-if(UNIX)
-    find_package(JUCE CONFIG REQUIRED)
-endif(UNIX)
+# You can set the juce install path with the JUCE_INSTALL_PATH environment variable
+if(DEFINED ENV{JUCE_INSTALL_PATH})
+    add_subdirectory($ENV{JUCE_INSTALL_PATH} JUCE)
+endif()
+# Default install paths for Win/Mac/Linux
+if(NOT DEFINED ENV{JUCE_INSTALL_PATH})
+    if(WIN32)
+        add_subdirectory("/JUCE" JUCE)
+    endif(WIN32)
+    if(APPLE)
+        add_subdirectory("/Users/$ENV{USER}/Applications/JUCE" JUCE)
+    endif(APPLE)
+    if(UNIX AND NOT APPLE)
+        add_subdirectory("/home/$ENV{USER}/JUCE" JUCE)
+    endif(UNIX AND NOT APPLE)
+endif()
+
+
 
 # If you are building a VST2 or AAX plugin, CMake needs to be told where to find these SDKs on your
 # system. This setup should be done before calling `juce_add_plugin`.
@@ -39,8 +47,8 @@ juce_add_plugin(Hyperpan
 
 target_sources(Hyperpan
     PRIVATE
-        PluginEditor.cpp
-        PluginProcessor.cpp)
+        src/PluginEditor.cpp
+        src/PluginProcessor.cpp)
 
 
 target_compile_definitions(Hyperpan

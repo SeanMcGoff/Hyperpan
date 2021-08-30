@@ -2,6 +2,7 @@
 **/cmake-build
 **/cmake-build-debug
 **/cmake-build-release
+**/CMakeFiles
 # Jetbrains
 **/.idea
 # plugin file extensions

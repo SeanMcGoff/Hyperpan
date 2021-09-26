@@ -128,7 +128,7 @@ void HyperpanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     std::atomic<float>* mixParameter = apvts.getRawParameterValue("mix");
     float mix = mixParameter->load() / 100.f;
 
-    //Linear, Square, Sine
+    //Linear, Square, Sine, Split
     juce::String panlaw = apvts.getParameter("panlaw")->getCurrentValueAsText();
 
     juce::ignoreUnused (midiMessages);
@@ -165,6 +165,14 @@ void HyperpanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             //SINE PAN LAW
             leftMult = sinf(static_cast<float>((1.f - normalizedAmplitude) * PI / 2.f));
             rightMult = sinf(static_cast<float>(normalizedAmplitude * PI / 2.f));
+        }
+        if (panlaw == "Split") {
+            //SPLIT PAN LAW (Design by 5steps)
+            if (normalizedAmplitude > 0.5) {
+                leftMult = 0;
+            } else {
+                rightMult = 0;
+            }
         }
         float leftWet = left[sample] * leftMult;
         float rightWet = right[sample] * rightMult;
@@ -220,7 +228,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout HyperpanAudioProcessor::crea
 
     auto cutoffRange = juce::NormalisableRange<float>(0.f, 100.f, 0.1f, 1.f, true);
     layout.add(std::make_unique<juce::AudioParameterFloat>("mix", "Dry/Wet", cutoffRange, 0.f));
-    layout.add(std::make_unique<juce::AudioParameterChoice>("panlaw", "Pan Law", juce::StringArray("Linear", "Square", "Sine"), 0));
+    layout.add(std::make_unique<juce::AudioParameterChoice>("panlaw", "Pan Law", juce::StringArray("Linear", "Square", "Sine", "Split"), 0));
     return layout;
 }
 
